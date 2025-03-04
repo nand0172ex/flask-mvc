@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-3">Welcome to Flask MVC</h1>
+    <p class="lead">A lightweight Flask framework with MVC architecture.</p>
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg">Signup</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg">Login</a>
+</div>
+{% endblock %}

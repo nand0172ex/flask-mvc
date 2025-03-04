@@ -1,0 +1,37 @@
+# Bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDE and Editor Config Files
+.vscode/
+*.code-workspace
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and Debugging Files
+logs/
+*.log
+debug.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Environment Variables (Secrets)
+.env
+config.py
+
+# Database Files
+*.sqlite3
+*.db
+
+# Cache Files
+.cache/

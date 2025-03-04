@@ -100,3 +100,156 @@ Edit
    git push origin main
 Now your project looks professional on GitHub! 🚀🔥
 Let me know if you need any changes! 😃
+-----------------------------
+
+
+# 📖 **Flask MVC Framework Documentation** 🚀  
+
+## 📌 **Overview**  
+This Flask-based **MVC (Model-View-Controller) framework** provides a structured approach to building scalable web applications. It follows **Ruby on Rails-style MVC**, supports **authentication, RBAC, REST APIs**, and integrates **Bootstrap for UI**.  
+
+---
+
+## 📂 **Project Structure**  
+
+```
+flask-mvc/
+│
+├── app/
+│   ├── __init__.py
+│   ├── models/          # Database models
+│   ├── controllers/     # Business logic controllers
+│   ├── views/           # Frontend templates & static files
+│   │   ├── layouts/     # Base templates (header, footer)
+│   │   ├── auth/        # Authentication views (Login, Signup)
+│   │   ├── common/      # Common UI components
+│   │   ├── home/        # Home page templates
+│   │   └── static/      # CSS, JS, Images
+│   ├── services/        # Business logic services
+│   ├── utils/           # Helper utilities
+│
+├── tests/               # Unit tests
+├── config.py            # Configuration settings
+├── requirements.txt     # Python dependencies
+├── run.py               # Entry point to run Flask app
+├── .gitignore           # Git ignored files
+└── README.md            # Project documentation
+```
+
+---
+
+## 🎯 **How Does the MVC Framework Work?**  
+
+- **Models (`app/models/`)** → Handles database structure & queries.  
+- **Views (`app/views/`)** → Frontend UI (HTML, Jinja2 templates).  
+- **Controllers (`app/controllers/`)** → Manages app logic & routes.  
+
+---
+
+# 📌 **How to Add a New Page in Flask MVC?**  
+
+Let’s say you want to add a **"Dashboard"** page. Follow these steps:
+
+---
+
+## ✅ **Step 1: Create the View (UI)**  
+📌 **Location:** `app/views/dashboard/index.html`  
+
+```html
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Dashboard</h1>
+        <p>Welcome to your dashboard!</p>
+    </div>
+{% endblock %}
+```
+
+- It **extends** `layouts/base.html`, ensuring a **consistent UI**.  
+- The `content` block **injects content dynamically** into the base layout.
+
+---
+
+## ✅ **Step 2: Create the Controller**  
+📌 **Location:** `app/controllers/dashboard_controller.py`  
+
+```python
+from flask import Blueprint, render_template
+
+dashboard_blueprint = Blueprint("dashboard", __name__)
+
+@dashboard_blueprint.route("/dashboard")
+def dashboard_home():
+    """Render the dashboard page"""
+    return render_template("dashboard/index.html")
+```
+
+- The **Blueprint** defines the `dashboard` module.  
+- The `dashboard_home()` function **renders** the UI.  
+- The route `/dashboard` **maps** to the `index.html` template.
+
+---
+
+## ✅ **Step 3: Register the Controller in `run.py`**  
+📌 **Location:** `run.py`  
+
+```python
+from flask import Flask
+from app.controllers.dashboard_controller import dashboard_blueprint
+
+app = Flask(__name__)
+
+# Register routes
+app.register_blueprint(dashboard_blueprint, url_prefix="")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+- The `dashboard_blueprint` is **registered** in the Flask app.  
+- The `url_prefix=""` makes `/dashboard` directly accessible.  
+
+---
+
+## ✅ **Step 4: Add a Link in the Navigation Bar**  
+📌 **Location:** `app/views/layouts/header.html`  
+
+```html
+<nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+</nav>
+```
+
+- The **navbar links** now include **Dashboard**.
+
+---
+
+## ✅ **Step 5: Run the Application**
+Start the Flask server:
+```bash
+python run.py
+```
+Now visit:  
+🔗 **[http://127.0.0.1:5000/dashboard](http://127.0.0.1:5000/dashboard)**  
+
+---
+
+# 🎯 **Additional Features**
+Want to enhance the framework?  
+- **Database Integration:** Add models in `app/models/`.  
+- **APIs:** Use `Flask-RESTful` for building APIs.  
+- **Authentication:** Extend the `auth` module for login & signup.  
+- **RBAC:** Control access by user roles.  
+- **Docker Deployment:** Deploy using `Docker` and `AWS`.  
+
+---
+
+# 📌 **Final Thoughts**
+This framework ensures:  
+✅ **Organized code structure**  
+✅ **Scalability with MVC principles**  
+✅ **Reusable UI with Bootstrap & Jinja2**  
+✅ **API integration for flexibility**  
+

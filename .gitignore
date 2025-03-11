@@ -27,7 +27,7 @@ Thumbs.db
 
 # Environment Variables (Secrets)
 .env
-config.py
+# config.py
 
 # Database Files
 *.sqlite3

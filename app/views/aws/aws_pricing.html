@@ -1,30 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Pricing Calculator</title>
+{% extends 'layouts/base.html' %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}AWS Pricing{% endblock %}
 
-    <!-- Tabulator CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css">
+{% block content %}
 
-    <style>
-        body {
-            padding: 20px;
-        }
-        #awsPricingTable {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-        }
-        .dropdown-menu {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-    </style>
-</head>
 <body class="container">
 
     <h2 class="text-center my-3">AWS Pricing Calculator</h2>
@@ -34,7 +13,6 @@
             <label for="regionSelect" class="form-label">Select Region:</label>
             <select id="regionSelect" class="form-select" onchange="loadGridData()">
                 <option value="us-east-1">US East (N. Virginia)</option>
-                <option value="us-west-1">US West (N. California)</option>
                 <option value="eu-central-1">EU (Frankfurt)</option>
             </select>
         </div>
@@ -59,11 +37,7 @@
 
     <div id="awsPricingTable" class="mt-4"></div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Tabulator JS -->
-    <script src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+ 
 
     <script>
         let table;
@@ -229,5 +203,4 @@
 
     </script>
 
-</body>
-</html>
+{% endblock %}

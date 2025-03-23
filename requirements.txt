@@ -5,3 +5,4 @@ Flask-OAuthlib
 Flask-WTF
 Flask-Migrate
 Flask-Login
+flask_cors

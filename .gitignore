@@ -8,6 +8,7 @@ __pycache__/
 venv/
 env/
 .venv/
+fvenv/
 
 # IDE and Editor Config Files
 .vscode/

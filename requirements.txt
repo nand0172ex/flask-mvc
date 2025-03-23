@@ -5,3 +5,7 @@ Flask-OAuthlib
 Flask-WTF
 Flask-Migrate
 Flask-Login
+<<<<<<< Updated upstream
+=======
+Boto3
+>>>>>>> Stashed changes

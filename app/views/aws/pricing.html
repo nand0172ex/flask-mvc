@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS EC2 Pricing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+    <h1 class="text-center mb-4">AWS EC2 Pricing</h1>
+
+    <!-- AWS Region Dropdown -->
+    <div class="mb-3">
+        <label for="awsRegion" class="form-label">Select AWS Region:</label>
+        <select id="awsRegion" class="form-select" onchange="fetchPricing(1)">
+            <option value="">Loading regions...</option>
+        </select>
+    </div>
+
+    <!-- Page Size Selection -->
+    <div class="mb-3">
+        <label for="pageSize" class="form-label">Records Per Page:</label>
+        <select id="pageSize" class="form-select" onchange="fetchPricing(1)">
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+        </select>
+    </div>
+
+    <!-- Search Filter -->
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search instances..." onkeyup="filterTable()">
+
+    <!-- EC2 Pricing Table -->
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th onclick="sortTable(0)">Instance Type</th>
+                <th onclick="sortTable(1)">vCPUs</th>
+                <th onclick="sortTable(2)">Memory (GiB)</th>
+                <th onclick="sortTable(3)">On-Demand Price</th>
+            </tr>
+        </thead>
+        <tbody id="pricing-table">
+            <tr><td colspan="4" class="text-center">Loading...</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div id="pagination" class="d-flex justify-content-center"></div>
+
+    <script>
+        let currentPage = 1;
+        let pageSize = 50;
+        let allRegions = {};
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fetchRegions();
+            fetchPricing(1);
+        });
+
+        // Fetch AWS regions dynamically
+        function fetchRegions() {
+            fetch("/aws/regions")
+                .then(response => response.json())
+                .then(data => {
+                    const regionSelect = document.getElementById("awsRegion");
+                    regionSelect.innerHTML = "";
+                    allRegions = data.regions;
+                    
+                    data.regions.forEach(region => {
+                        let option = document.createElement("option");
+                        option.value = region.code;
+                        option.textContent = region.name; 
+                        regionSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching regions:", error));
+        }
+
+        // Fetch EC2 Pricing Data
+        function fetchPricing(page = 1) {
+            currentPage = page;
+            pageSize = document.getElementById("pageSize").value;
+            let selectedRegion = document.getElementById("awsRegion").value || "us-east-1";
+
+            fetch(`/aws/pricing/ec2?region=${selectedRegion}&page=${page}&limit=${pageSize}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.prices);
+                    updatePagination(data.page, data.limit, data.total_instances);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+
+        // Update Table Data
+        function updateTable(prices) {
+            const tableBody = document.getElementById("pricing-table");
+            tableBody.innerHTML = "";
+
+            prices.forEach(instance => {
+                let row = `<tr>
+                    <td>${instance.instanceType}</td>
+                    <td>${instance.vCPU}</td>
+                    <td>${instance.memory}</td>
+                    <td>${instance.OnDemand}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Update Pagination
+        function updatePagination(current, limit, total) {
+            const paginationDiv = document.getElementById("pagination");
+            paginationDiv.innerHTML = "";
+            const totalPages = Math.ceil(total / limit);
+
+            for (let i = 1; i <= totalPages; i++) {
+                let btn = document.createElement("button");
+                btn.textContent = i;
+                btn.classList.add("btn", "btn-outline-primary", "mx-1");
+                btn.onclick = () => fetchPricing(i);
+                if (i === current) {
+                    btn.classList.add("btn-primary");
+                }
+                paginationDiv.appendChild(btn);
+            }
+        }
+
+        // Sort Table Columns
+        function sortTable(columnIndex) {
+            let table = document.querySelector("table tbody");
+            let rows = Array.from(table.rows);
+
+            rows.sort((rowA, rowB) => {
+                let cellA = rowA.cells[columnIndex].textContent.trim();
+                let cellB = rowB.cells[columnIndex].textContent.trim();
+
+                if (!isNaN(cellA) && !isNaN(cellB)) {
+                    return parseFloat(cellA) - parseFloat(cellB);
+                }
+                return cellA.localeCompare(cellB);
+            });
+
+            table.innerHTML = "";
+            rows.forEach(row => table.appendChild(row));
+        }
+
+        // Search Filter
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("#pricing-table tr");
+
+            rows.forEach(row => {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

@@ -13,7 +13,6 @@ def create_app():
     # Import and register Blueprints
     from app.controllers.auth.auth_controller import auth_bp
     from app.controllers.home.home_controller import home_bp
-
     app.register_blueprint(home_bp, url_prefix='/')
     app.register_blueprint(auth_bp, url_prefix='/auth')
 

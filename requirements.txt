@@ -7,3 +7,4 @@ Flask-Migrate
 Flask-Login
 flask_cors
 boto3
+Frozen-Flask

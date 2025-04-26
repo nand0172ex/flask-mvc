@@ -1,5 +1,6 @@
 import requests
 from flask import Flask, jsonify
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -16,18 +17,40 @@ def get_option_chain():
             'Connection': 'keep-alive',
             'Host': 'www.nseindia.com'
         }
+        
         session = requests.Session()
         
         # Pehle homepage hit karte hain taaki cookies mil jaye
-        session.get('https://www.nseindia.com', headers=headers, timeout=5)
+        session.get('https://www.nseindia.com', headers=headers, timeout=10)
         
-        # Ab original API call karte hain with cookies
-        response = session.get(url, headers=headers, timeout=5)
+        # Fetch the option chain data
+        response = session.get(url, headers=headers, timeout=10)
         
         if response.status_code == 200:
-            return jsonify(response.json())
+            data = response.json()
+
+            # Extract expiry dates and filter current expiry date
+            expiry_dates = data['records']['expiryDates']
+            today = datetime.today().date()
+
+            # Find the nearest expiry date (current expiry)
+            current_expiry = min(expiry_dates, key=lambda x: abs(datetime.strptime(x, '%d-%b-%Y').date() - today))
+            
+            # Filter option chain data for the current expiry
+            option_data = data['records']['data']
+            current_expiry_data = None
+            for item in option_data:
+                if current_expiry in item['expiryDate']:
+                    current_expiry_data = item
+                    break
+
+            if current_expiry_data:
+                return jsonify(current_expiry_data)
+            else:
+                return jsonify({"error": "No data found for the current expiry."})
         else:
-            return jsonify({"error": "Failed to fetch option chain", "status_code": response.status_code})
+            return jsonify({"error": "Failed to fetch option chain data", "status_code": response.status_code})
+    
     except Exception as e:
         return jsonify({"error": str(e)})
 

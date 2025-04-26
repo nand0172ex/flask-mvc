@@ -10,26 +10,31 @@ def home():
 @app.route('/nifty-option-chain')
 def get_option_chain():
     try:
-        url = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-            "Accept": "application/json",
-            "Referer": "https://www.nseindia.com/",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-US,en;q=0.9",
-            "Connection": "keep-alive",
-        }
-        
         session = requests.Session()
-        session.headers.update(headers)
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+        })
 
-        # Send a HEAD request to nseindia to set cookies
-        session.get("https://www.nseindia.com", timeout=5)
+        # Pehle NSE ki main site hit karo cookies generate karne ke liye
+        homepage = session.get("https://www.nseindia.com", timeout=10)
+        
+        if homepage.status_code != 200:
+            return jsonify({"error": "Unable to fetch NSE homepage for session."}), 500
 
-        response = session.get(url, timeout=10)
-        data = response.json()
+        # Ab actual API call karo
+        api_url = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
+        api_response = session.get(api_url, timeout=10)
 
-        # Sirf current expiry date ka data nikalna
+        if api_response.status_code != 200:
+            return jsonify({"error": "Unable to fetch option chain data."}), 500
+
+        data = api_response.json()
+
+        # Sirf current expiry ka data filter karo
         current_expiry = data['records']['expiryDates'][0]
         filtered_data = []
 
